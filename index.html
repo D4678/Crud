@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Table</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid black;
+        }
+
+        th,
+        td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Employee Details</h2>
+    <button id="createRecordBtn">Create Record</button><br><br>
+    <table id="employeeTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Mobile</th>
+                <th>DOB</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <!-- data -->
+        </tbody>
+    </table>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", "http://localhost:3000/employees", true);
+            xhr.onload = function () {
+
+                const employees = JSON.parse(this.responseText);
+                console.log(employees);
+                const employeeTable = document.getElementById('employeeTable');
+
+                employees.forEach(employee => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                            <td>${employee.id}</td>
+                            <td>${employee.name}</td>
+                            <td>${employee.mobile}</td>
+                            <td>${employee.dob}</td>
+                            <td>
+                                 <a href="putRequest.html?id=${employee.id}">Update Emploeee</a><br>     
+                                 <a href="#" onclick="deleteEmployee(${employee.id})">Delete Emploeee</a><br>
+                            </td>
+                        `;
+                    employeeTable.appendChild(row);
+                });
+            };
+            xhr.send();
+        });
+
+        // craeate Form
+        document.getElementById('createRecordBtn').addEventListener("click", function () {
+            window.location.href = 'postRequest.html';
+        });
+
+         // update form   
+        function updateEmployee(id) {
+            window.location.href = `putRequest.html?id=${id}`;
+        }
+
+        function deleteEmployee(id) {
+            if (confirm('Are you sure you want to delete this employee?')) {
+                const xhr = new XMLHttpRequest();
+                xhr.open("DELETE", `http://localhost:3000/employees/${id}`, true);
+                xhr.onload = function () {
+                    alert('Employee deleted successfully!');
+                    location.reload();
+                };
+                xhr.send();
+            }
+        }
+    </script>
+    <!-- <script src="index.js"></script> -->
+</body>
+
+</html>

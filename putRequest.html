@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Employee</title>
+</head>
+
+<body>
+    <h2>Update Employee</h2>
+    <form id="updateForm">
+
+        <input type="hidden" id="id" name="id"> 
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name"><br>
+        <label for="mobile">Mobile:</label><br>
+        <input type="text" id="mobile" name="mobile"><br>
+        <label for="dob">Date of Birth:</label><br>
+        <input type="date" id="dob" name="dob"><br><br>
+        <button type="submit">Update</button>
+
+    </form>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const employeeId = urlParams.get('id');
+
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", `http://localhost:3000/employees/${employeeId}`, true);
+            xhr.onload = function () {
+                    const data = JSON.parse(xhr.responseText);
+                    console.log(data)
+                    document.getElementById('id').value = data.id;
+                    document.getElementById('name').value = data.name;
+                    document.getElementById('mobile').value = data.mobile;
+                    document.getElementById('dob').value = data.dob; 
+            };
+            xhr.send();
+        });
+
+        const updateForm = document.getElementById('updateForm');
+
+        updateForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(updateForm);
+            const updateData = Object.fromEntries(formData);
+            const id = updateData.id;
+
+            const xhr = new XMLHttpRequest();
+            xhr.open("PUT", `http://localhost:3000/employees/${id}`, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onload = function () {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    console.log('Update successful', xhr.responseText);
+                    alert('Employee updated successfully!');
+                    window.location.href = 'index.html'; // Redirect back to the list
+                } else {
+                    console.error('Update failed:', xhr.status, xhr.statusText);
+                }
+            };
+            xhr.send(JSON.stringify(updateData));
+        });
+
+    </script>
+
+</body>
+
+</html>

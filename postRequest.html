@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Employee</title>
+</head>
+<body>
+    <h2>Create New Employee</h2>
+    <form id="employeeForm">
+        <label for="id">ID:</label><br>
+        <input type="text" id="id" name="id" required><br>
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name" required><br>
+        <label for="mobile">Mobile:</label><br>
+        <input type="text" id="mobile" name="mobile" required><br>
+        <label for="dob">Date of Birth:</label><br>
+        <input type="date" id="dob" name="dob" required><br><br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        document.getElementById('employeeForm').addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const employee = {
+                id: document.getElementById("id").value,
+                name: document.getElementById("name").value,
+                mobile: document.getElementById("mobile").value,
+                dob: document.getElementById("dob").value
+            };
+
+            const xhttp = new XMLHttpRequest();
+
+            xhttp.onload = function() {
+                console.log("Response Received:", this.responseText);
+                alert("Employee Created Successfully!");
+                window.location = 'index.html'; // Redirect back to employee list after creation
+            };
+
+            xhttp.open("POST", "http://localhost:3000/employees", true);
+            xhttp.setRequestHeader("Content-Type", "application/json");
+
+            xhttp.send(JSON.stringify(employee));
+        });
+    </script>
+</body>
+</html>
